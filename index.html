@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Money Contract Interface</title>
+</head>
+<body>
+    <h1>Money Contract Interface</h1>
+    <p>Money Amount: <span id="moneyAmount">Loading...</span></p>
+
+    <label for="newAmount">New Amount: </label>
+    <input type="number" id="newAmount" placeholder="Enter a new amount">
+    <button onclick="setMoneyAmount()">Set Money Amount</button>
+
+    <button onclick="getMoneyAmount()">Get Money Amount</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.6/web3.min.js"></script>
+    <script src=""></script>
+    <script>
+
+
+        const contractAddress = '0x7EF2e0048f5bAeDe046f6BF797943daF4ED8CB47'; // Replace with your contract address
+        const contractAbi = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "int256",
+                        "name": "_moneyAmount",
+                        "type": "int256"
+                    }
+                ],
+                "name": "setMoneyAmount",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getMoneyAmount",
+                "outputs": [
+                    {
+                        "internalType": "int256",
+                        "name": "",
+                        "type": "int256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "moneyAmount",
+                "outputs": [
+                    {
+                        "internalType": "int256",
+                        "name": "",
+                        "type": "int256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+
+        const url = 'http://localhost:8545';
+        const web3 = new Web3(url); 
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+        const moneyContract = new web3.eth.Contract(contractAbi, contractAddress);
+
+        console.log(moneyContract);
+
+        async function getMoneyAmount() {
+            const moneyAmount = await moneyContract.methods.getMoneyAmount().call();
+            document.getElementById("moneyAmount").innerText = moneyAmount;
+        }
+
+        async function setMoneyAmount() {
+            const newAmount = document.getElementById("newAmount").value;
+            await moneyContract.methods.setMoneyAmount(newAmount).send({ from: web3.eth.accounts[0] });
+            getMoneyAmount();
+        }
+    </script>
+</body>
+</html>
